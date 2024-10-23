@@ -64,7 +64,7 @@ NOTE: What is the tech stack?
 2. Create terraform file(s) for creating the infrastructure outlined below:
 
 ```
-- 1x Custom VPC in us-east-1
+- 1x Custom VPC named "wl5vpc" in us-east-1
 - 2x Availability zones in us-east-1a and us-east-1b
 - A private and public subnet in EACH AZ
 - An EC2 in each subnet (EC2s in the public subnets are for the frontend, the EC2s in the private subnets are for the backend) Name the EC2's: "ecommerce_frontend_az1", "ecommerce_backend_az1", "ecommerce_frontend_az2", "ecommerce_backend_az2"
@@ -158,16 +158,16 @@ variable "db_name" {
 variable "db_username" {
   description = "Username for the master DB user"
   type        = string
-  default     = "your user name here"
+  default     = "kurac5user"
 }
 
 variable "db_password" {
   description = "Password for the master DB user"
   type        = string
-  default     = "super secret password"
+  default     = "kurac5password"
 }
 ```
-NOTE: change the default values to the values you want to use.
+NOTE: DO NOT CHANGE THE VALUES OF THE VARIABLES!
 
 4. Edit the Jenkinsfile with the stages: "Build", "Test", "Init", "Plan", and "Apply" that will build the application, test the application (tests have already been created for this workload- the stage just needs to be edited to activate the venv and paths to the files checked), and then run the Terraform commands to create the infrastructure and deploy the application.
 
@@ -201,7 +201,7 @@ python manage.py loaddata datadump.json
 
 Note 5: Notice lines 33, 34, and 36 of the Jenkinsfile.  You will need to use AWS IAM credentials for this account to use terraform.  However, you cannot upload those credentials to GitHub otherwise your account will be locked immediately.  Again: DO NOT EVER UPLOAD YOUR AWS ACCESS KEYS TO GITHUB OR YOUR ACCOUNT WILL BE LOCKED OUT IMMEDIATELY! (notify an insructor if this happens..).  In order to use your keys, you will need to use Jenkins Secret Manager to store credentials.  Follow the following steps to do so:
 
-1. Create your multibranch pipeline and connect your GitHub account.  
+1. Create a multibranch pipeline called "Workload_5" and connect your GitHub account.
 
 2. AFTER adding your GitHub credentials (with or without saving the multibranch pipeline), navigate to the Jenkins Dashboard and click on "Manage Jenkins" on the left navagation panel.
 
@@ -227,7 +227,7 @@ Note 3: You can do this with the RDS password as well.  The "terraform plan" com
 
 5. Run the Jenkins Pipeline to create and deploy the infrastructure and application!
 
-5. Create a monitoring EC2 in the default VPC that will monitor the resources of the various servers.  (Hopefully you read through these instructions in it's entirety before you ran the pipeline so that you could configure the correct ports for node exporter.)
+5. Create a monitoring EC2 called "Monitoring" in the default VPC that will monitor the resources of the various servers.  (Hopefully you read through these instructions in it's entirety before you ran the pipeline so that you could configure the correct ports for node exporter.)
 
 6. Document! All projects have documentation so that others can read and understand what was done and how it was done. Create a README.md file in your repository that describes:
 
