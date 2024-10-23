@@ -221,9 +221,9 @@ Note 5: Notice lines 33, 34, and 36 of the Jenkinsfile.  You will need to use AW
 
 Note 1: What is this doing? How does this all translate to terraform being able provision infrastructure?
 
-Note 2: MAKE SURE THAT YOUR main.tf HAS VARIABLES FOR `aws_access_key` AND `aws_secret_key`! THERE SHOULD BE NO VALUE TO THOSE VARIABLES IN ANY OF THE FILES!
+Note 2: MAKE SURE THAT YOUR main.tf HAS VARIABLES DECLARED FOR `aws_access_key` AND `aws_secret_key`! THERE SHOULD BE NO VALUE TO THESE VARIABLES IN ANY OF THE FILES!
 
-Note 3: You can do this with the RDS password as well.  The "terraform plan" command will need to be modified to accomodate any variable that was set but has no value.
+Note 3: You can do this with the RDS password as well.  The "terraform plan" command will need to be modified to accomodate any variable that was declared but has no value.
 
 5. Run the Jenkins Pipeline to create and deploy the infrastructure and application!
 
@@ -241,13 +241,13 @@ Note 3: You can do this with the RDS password as well.  The "terraform plan" com
 
   	e. An "OPTIMIZATION" section for how you think this workload/infrastructure/CICD pipeline, etc. can be optimized further.  
 
-    f. A "Business Intelligence" section for the questions below,
+    f. A "BUSINESS INTELLIGENCE" section for the questions below,
 
     g. A "CONCLUSION" statement as well as any other sections you feel like you want to include.
 
 ## Business Intelligence
 
-The database for this application is not empty.  There are many tables but the following are the ones to focus on: "auth_user", "product", "account billing address", "account_stripemodel", and "account_ordermodel"
+The database for this application is not empty.  There are many tables but the following are the ones to focus on: "auth_user", "product", "account_billing_address", "account_stripemodel", and "account_ordermodel"
 
 For each of the following questions (besides #1), you will need to perform SQL queries on the RDS database.  There are multiple methods. here are 2:
 
@@ -285,6 +285,8 @@ cur.execute("SELECT * FROM my_table;")
 # Fetch the result of the query
 rows = cur.fetchall()
 ```
+
+How you choose to run these queries is up to you.  You can run them in the terminal, a python script, a jupyter notebook, etc.  
 
 Questions: 
 
