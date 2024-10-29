@@ -33,6 +33,7 @@ pipeline {
         # Install dependencies
         pip install --upgrade pip
 	pip install --upgrade Pillow
+        pip install django pytest pytest-django
         pip install -r backend/requirements.txt
             
         # Run migrations
