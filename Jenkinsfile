@@ -33,8 +33,15 @@ pipeline {
         # Install dependencies
         pip install --upgrade pip
 	pip install --upgrade Pillow
-        pip install django pytest pytest-django
+	pip install django
+        pip install djangorestframework
+        pip install pytest pytest-django
         pip install -r backend/requirements.txt
+            
+        # Set the PYTHONPATH to include your backend directory
+        export PYTHONPATH=$WORKSPACE/backend:$PYTHONPATH
+
+ 	
             
         # Run migrations
         python backend/manage.py makemigrations
