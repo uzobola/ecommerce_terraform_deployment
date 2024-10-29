@@ -28,7 +28,14 @@ pipeline {
         sh '''#!/bin/bash
         # code to activate virtual environment>
 	python3 -m venv venv
-	source venv/bin/activate
+        source venv/bin/activate
+            
+        # Install dependencies
+        pip install --upgrade pip
+        pip install -r backend/requirements.txt
+            
+        # Run migrations
+        cd backend
         pip install pytest-django
         python backend/manage.py makemigrations
         python backend/manage.py migrate
