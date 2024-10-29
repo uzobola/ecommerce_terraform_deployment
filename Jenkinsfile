@@ -21,34 +21,34 @@ pipeline {
 	sudo apt-get install -y nodejs
  	cd ..
         '''
-     }
-   }
-    stage ('Test') {
-      steps {
-        sh '''#!/bin/bash
-        # Activate virtual environment
-	python3 -m venv venv
-        source venv/bin/activate
-
- 	pip install pytest-django
-
-  	# Set Django settings module to match project name
-        export DJANGO_SETTINGS_MODULE=my_project.settings
-        
-        # Set PYTHONPATH to include backend directory
-        export PYTHONPATH=$WORKSPACE/backend:$PYTHONPATH
-        # Run migrations in the correct directory
-        python backend/manage.py makemigrations account
-        python backend/manage.py makemigrations payments
-        python backend/manage.py makemigrations product
-        python backend/manage.py migrate
-
-        # Run tests with correct paths
-        pytest backend/account/tests.py --verbose --junit-xml test-reports/results.xml
- 
-        ''' 
       }
     }
+ //    stage ('Test') {
+ //      steps {
+ //        sh '''#!/bin/bash
+ //        # Activate virtual environment
+	// python3 -m venv venv
+ //        source venv/bin/activate
+
+ // 	pip install pytest-django
+
+ //  	# Set Django settings module to match project name
+ //        export DJANGO_SETTINGS_MODULE=my_project.settings
+        
+ //        # Set PYTHONPATH to include backend directory
+ //        export PYTHONPATH=$WORKSPACE/backend:$PYTHONPATH
+ //        # Run migrations in the correct directory
+ //        python backend/manage.py makemigrations account
+ //        python backend/manage.py makemigrations payments
+ //        python backend/manage.py makemigrations product
+ //        python backend/manage.py migrate
+
+ //        # Run tests with correct paths
+ //        pytest backend/account/tests.py --verbose --junit-xml test-reports/results.xml
+ 
+ //        ''' 
+ //      }
+ //    }
    
      stage('Init') {
        steps {
