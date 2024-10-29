@@ -29,6 +29,8 @@ pipeline {
         # Activate virtual environment
 	python3 -m venv venv
         source venv/bin/activate
+
+ 	pip install pytest-django
         
         # Set PYTHONPATH to include backend directory
         export PYTHONPATH=$WORKSPACE/backend:$PYTHONPATH
@@ -40,7 +42,6 @@ pipeline {
 
         # Run tests with correct paths
         pytest backend/account/tests.py --verbose --junit-xml test-reports/results.xml
-
  
         ''' 
       }
