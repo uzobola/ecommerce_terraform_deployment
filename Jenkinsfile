@@ -5,7 +5,7 @@ pipeline {
       steps {
         sh '''#!/bin/bash
 	# This  creates the python  virtual environment
-        python3.9 -m venv venv
+        python3 -m venv venv
                 
 	# This activates the python virtual environment
 	source venv/bin/activate
