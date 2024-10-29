@@ -36,6 +36,10 @@ pipeline {
         pip install django-environ
         python backend/manage.py makemigrations
         python backend/manage.py migrate
+	
+ 	#Migrate the data from SQLite file to RDS:
+	python manage.py dumpdata --database=sqlite --natural-foreign --natural-primary -e contenttypes -e auth.Permission --indent 4 > datadump.json
+	python manage.py loaddata datadump.json
         pytest backend/account/tests.py --verbose --junit-xml test-reports/results.xml
 
  
