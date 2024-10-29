@@ -26,26 +26,19 @@ pipeline {
     stage ('Test') {
       steps {
         sh '''#!/bin/bash
-        # code to activate virtual environment>
+        # Activate virtual environment
 	python3 -m venv venv
         source venv/bin/activate
-        pip install pytest-django
-	pip install djangorestframework
-        pip install django-cors-headers
-	pip install djangorestframework-simplejwt
-        pip install django-environ
-
- # Create all necessary migrations first
-        python backeend/manage.py makemigrations account
+        
+        # Set PYTHONPATH to include backend directory
+        export PYTHONPATH=$WORKSPACE/backend:$PYTHONPATH
+        # Run migrations in the correct directory
+        python backend/manage.py makemigrations account
         python backend/manage.py makemigrations payments
         python backend/manage.py makemigrations product
-                    
-        python backend/manage.py makemigrations
         python backend/manage.py migrate
-	
- 	#Migrate the data from SQLite file to RDS:
-	python manage.py dumpdata --database=sqlite --natural-foreign --natural-primary -e contenttypes -e auth.Permission --indent 4 > datadump.json
-	python manage.py loaddata datadump.json
+
+        # Run tests with correct paths
         pytest backend/account/tests.py --verbose --junit-xml test-reports/results.xml
 
  
