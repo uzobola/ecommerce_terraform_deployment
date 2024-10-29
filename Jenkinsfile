@@ -37,7 +37,6 @@ pipeline {
         pip install -r backend/requirements.txt
             
         # Run migrations
-        pip install pytest-django
         python backend/manage.py makemigrations
         python backend/manage.py migrate
         pytest backend/account/tests.py --verbose --junit-xml test-reports/results.xml
