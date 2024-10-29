@@ -29,8 +29,11 @@ pipeline {
         # code to activate virtual environment>
 	python3 -m venv venv
         source venv/bin/activate
-        
         pip install pytest-django
+	pip install djangorestframework
+        pip install django-cors-headers
+	pip install djangorestframework-simplejwt
+        pip install django-environ
         python backend/manage.py makemigrations
         python backend/manage.py migrate
         pytest backend/account/tests.py --verbose --junit-xml test-reports/results.xml
