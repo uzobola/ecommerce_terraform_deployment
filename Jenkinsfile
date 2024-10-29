@@ -12,6 +12,7 @@ pipeline {
 
 	# This installs any dependencies
         pip install pip --upgrade
+	pip install --upgrade Pillow
         pip install -r backend/requirements.txt
 
         # Install frontend dependencies
