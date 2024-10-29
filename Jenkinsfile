@@ -31,6 +31,9 @@ pipeline {
         source venv/bin/activate
 
  	pip install pytest-django
+
+  	# Set Django settings module to match project name
+        export DJANGO_SETTINGS_MODULE=my_project.settings
         
         # Set PYTHONPATH to include backend directory
         export PYTHONPATH=$WORKSPACE/backend:$PYTHONPATH
