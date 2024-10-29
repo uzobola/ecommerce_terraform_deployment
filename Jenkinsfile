@@ -34,6 +34,12 @@ pipeline {
         pip install django-cors-headers
 	pip install djangorestframework-simplejwt
         pip install django-environ
+
+ # Create all necessary migrations first
+        python backeend/manage.py makemigrations account
+        python backend/manage.py makemigrations payments
+        python backend/manage.py makemigrations product
+                    
         python backend/manage.py makemigrations
         python backend/manage.py migrate
 	
