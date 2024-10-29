@@ -29,24 +29,13 @@ pipeline {
         # code to activate virtual environment>
 	python3 -m venv venv
         source venv/bin/activate
-            
-        # Install dependencies
-        pip install --upgrade pip
-	pip install --upgrade Pillow
-	pip install django
-        pip install djangorestframework
-        pip install pytest pytest-django
-        pip install -r backend/requirements.txt
-            
-        # Set the PYTHONPATH to include your backend directory
-        export PYTHONPATH=$WORKSPACE/backend:$PYTHONPATH
-
- 	
-            
-        # Run migrations
+        
+        pip install pytest-django
         python backend/manage.py makemigrations
         python backend/manage.py migrate
         pytest backend/account/tests.py --verbose --junit-xml test-reports/results.xml
+
+ 
         ''' 
       }
     }
