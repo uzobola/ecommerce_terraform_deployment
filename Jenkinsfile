@@ -4,7 +4,22 @@ pipeline {
     stage ('Build') {
       steps {
         sh '''#!/bin/bash
-        <code to build the application>
+        sh '''#!/bin/bash
+		    # This  creates the python  virtual environment
+          python3.9 -m venv venv
+                
+		    # This activates the python virtual environment
+		      source venv/bin/activate
+
+		    # This installs any dependencies
+        pip install pip --upgrade
+        pip install -r backend/requirements.txt
+
+        # Install frontend dependencies
+        cd frontend
+        npm install
+        cd ..
+
         '''
      }
    }
