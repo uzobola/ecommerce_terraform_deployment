@@ -19,13 +19,14 @@ pipeline {
         cd frontend
 	curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
 	sudo apt-get install -y nodejs
+ 	cd ..
         '''
      }
    }
     stage ('Test') {
       steps {
         sh '''#!/bin/bash
-        <code to activate virtual environment>
+        # code to activate virtual environment>
         pip install pytest-django
         python backend/manage.py makemigrations
         python backend/manage.py migrate
