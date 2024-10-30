@@ -220,6 +220,7 @@ resource "aws_lb" "frontend_alb" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]                       # Attaches the ALB to the security group
   subnets            = [var.public_subnet_az1_id, var.public_subnet_az2_id] # Specifies the public subnets where the ALB would live
+  enable_deletion_protection = false
 
   tags = {
     Name = "ecommerce_frontend_alb"
@@ -239,7 +240,13 @@ resource "aws_lb_target_group" "ecommerce_frontend_tg" {
   health_check {
     path                = "/" # Path to check the health of the application
     healthy_threshold   = 2   # Specifies the # of consecutive successful checks needed
-    unhealthy_threshold = 10  # Specifies the # of consecutive failed checks needed
+    unhealthy_threshold = 2  # Specifies the # of consecutive failed checks needed
+    interval            = 20
+    timeout             = 5
+  }
+    tags = {
+    Name = "ecommerce-frontend-tg"
+
   }
 }
 
