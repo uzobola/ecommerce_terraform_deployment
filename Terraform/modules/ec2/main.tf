@@ -17,14 +17,14 @@ resource "aws_security_group" "alb_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]   # Allows HTTP from anywhere
+    cidr_blocks = ["0.0.0.0/0"] # Allows HTTP from anywhere
   }
 
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]   # Allows all outbound traffic
+    cidr_blocks = ["0.0.0.0/0"] # Allows all outbound traffic
   }
 
   tags = {
@@ -38,8 +38,8 @@ resource "aws_security_group" "ecommerce_frontend_sg" {
   name        = "ecommerce_frontend_sg"
   description = "Security group for frontend servers"
   vpc_id      = var.vpc_id
-  
-  
+
+
   # Ingress rules: Define inbound traffic that is allowed.Allow SSH traffic and HTTP traffic on port 8080 from any IP address (use with caution)
   ingress {
     from_port       = 3000
@@ -53,7 +53,7 @@ resource "aws_security_group" "ecommerce_frontend_sg" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    description     = "ssh"
+    description = "ssh"
   }
 
   ingress {
@@ -61,24 +61,24 @@ resource "aws_security_group" "ecommerce_frontend_sg" {
     to_port     = 9100
     protocol    = "tcp"
     cidr_blocks = ["172.31.43.95/32"]
-    description     = "Node Exporter metrics"
+    description = "Node Exporter metrics"
   }
 
 
   # Egress rules: Define outbound traffic that is allowed. The below configuration allows all outbound traffic from the instance.
-  
-  egress {
-    from_port   = 0                 # Allows all outbound traffic (From port 0 to any port)
-    to_port     = 0
-    protocol    = "-1"               # "1" Means all protocols
-    cidr_blocks = ["0.0.0.0/0"]     # Allow traffic to any IP address
 
-  }  
+  egress {
+    from_port   = 0 # Allows all outbound traffic (From port 0 to any port)
+    to_port     = 0
+    protocol    = "-1"          # "1" Means all protocols
+    cidr_blocks = ["0.0.0.0/0"] # Allow traffic to any IP address
+
+  }
 
   # Tags for the security group
   tags = {
-    "Name"      : "ecommerce_frontend_sg"                          # Name tag for the security group
-    "Terraform" : "true"                                # Custom tag to indicate this SG was created with Terraform
+    "Name" : "ecommerce_frontend_sg" # Name tag for the security group
+    "Terraform" : "true"             # Custom tag to indicate this SG was created with Terraform
   }
 }
 
@@ -104,16 +104,16 @@ resource "aws_security_group" "ecommerce_backend_sg" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    description     = "ssh"
+    description = "ssh"
   }
 
   # Node Exporter ingress rule
   ingress {
-    from_port       = 9100
-    to_port         = 9100
-    protocol        = "tcp"
-    cidr_blocks     = ["0.0.0.0/0"]  
-    description     = "Node Exporter metrics"
+    from_port   = 9100
+    to_port     = 9100
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Node Exporter metrics"
   }
 
   egress {
@@ -135,33 +135,35 @@ resource "aws_security_group" "ecommerce_backend_sg" {
 # Create 2 EC2 Instances in the Frontend Public Subnet
 # ecommerce_frontend_az1
 resource "aws_instance" "ecommerce_frontend_az1" {
-  ami           = var.ami_id # Replace with your desired AMI
-  instance_type = var.instance_type           # Change as needed
-  subnet_id     = var.public_subnet_az1_id
-  key_name      = var.key_name         # Specify your key pair name
+  ami                    = var.ami_id        # Replace with your desired AMI
+  instance_type          = var.instance_type # Change as needed
+  subnet_id              = var.public_subnet_az1_id
+  key_name               = var.key_name # Specify your key pair name
   vpc_security_group_ids = [aws_security_group.ecommerce_frontend_sg.id]
 
-  user_data     = file("${path.module}/scripts/frontend_userdata.sh") # path.module refers to the directory containing the module files, 
-                                                                      # so this will correctly locate the scripts in my ec2 module's scripts directory.
+  user_data = templatefile("${path.module}/scripts/frontend_userdata.sh", {
+    ssh_key = var.ssh_key
+  }) # path.module refers to the directory containing the module files, 
+  # so this will correctly locate the scripts in my ec2 module's scripts directory.
 
   tags = {
-    Name = "ecommerce_frontend_az1"
+    Name     = "ecommerce_frontend_az1"
     UserData = "true"
   }
 }
 
 # ecommerce_frontend_az2
 resource "aws_instance" "ecommerce_frontend_az2" {
-  ami           = var.ami_id
-  instance_type = var.instance_type
-  subnet_id     = var.public_subnet_az2_id
+  ami                    = var.ami_id
+  instance_type          = var.instance_type
+  subnet_id              = var.public_subnet_az2_id
   vpc_security_group_ids = [aws_security_group.ecommerce_frontend_sg.id]
-  key_name      = var.key_name
-  user_data     = file("${path.module}/scripts/frontend_userdata.sh") # path.module refers to the directory containing the module files, 
-                                                                      # so this will correctly locate the scripts in my ec2 module's scripts directory.
+  key_name               = var.key_name
+  user_data              = file("${path.module}/scripts/frontend_userdata.sh") # path.module refers to the directory containing the module files, 
+  # so this will correctly locate the scripts in my ec2 module's scripts directory.
 
   tags = {
-    Name = "ecommerce_frontend_az2"
+    Name     = "ecommerce_frontend_az2"
     UserData = "true"
   }
 }
@@ -171,30 +173,30 @@ resource "aws_instance" "ecommerce_frontend_az2" {
 # Create 2 EC2 Instances in the Backend Public Subnet
 # # ecommerce_backend_az1
 resource "aws_instance" "ecommerce_backend_az1" {
-  ami           = var.ami_id
-  instance_type = var.instance_type
-  subnet_id     = var.private_subnet_az1_id
+  ami                    = var.ami_id
+  instance_type          = var.instance_type
+  subnet_id              = var.private_subnet_az1_id
   vpc_security_group_ids = [aws_security_group.ecommerce_backend_sg.id]
-  key_name      = var.key_name
-  user_data     = file("${path.module}/scripts/backend_userdata.sh")
+  key_name               = var.key_name
+  user_data              = file("${path.module}/scripts/backend_userdata.sh")
 
   tags = {
-    Name = "ecommerce_backend_az1"
+    Name     = "ecommerce_backend_az1"
     UserData = "true"
   }
 }
 
 # # ecommerce_backend_az2
 resource "aws_instance" "ecommerce_backend_az2" {
-  ami           = var.ami_id
-  instance_type = var.instance_type
-  subnet_id     = var.private_subnet_az2_id
+  ami                    = var.ami_id
+  instance_type          = var.instance_type
+  subnet_id              = var.private_subnet_az2_id
   vpc_security_group_ids = [aws_security_group.ecommerce_backend_sg.id]
-  key_name      = var.key_name
-  user_data     = file("${path.module}/scripts/backend_userdata.sh")
+  key_name               = var.key_name
+  user_data              = file("${path.module}/scripts/backend_userdata.sh")
 
   tags = {
-    Name = "ecommerce_backend_az2"
+    Name     = "ecommerce_backend_az2"
     UserData = "true"
   }
 }
@@ -205,10 +207,10 @@ resource "aws_instance" "ecommerce_backend_az2" {
 # Application Load Balancer
 resource "aws_lb" "frontend_alb" {
   name               = "ecommerce-frontend-alb"
-  internal           = false         # This is to ensure that it is internet facing
-  load_balancer_type = "application"    
-  security_groups    = [aws_security_group.alb_sg.id]    # Attaches the ALB to the security group
-  subnets           = [var.public_subnet_az1_id, var.public_subnet_az2_id]    # Specifies the public subnets where the ALB would live
+  internal           = false # This is to ensure that it is internet facing
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.alb_sg.id]                       # Attaches the ALB to the security group
+  subnets            = [var.public_subnet_az1_id, var.public_subnet_az2_id] # Specifies the public subnets where the ALB would live
 
   tags = {
     Name = "ecommerce_frontend_alb"
@@ -221,25 +223,25 @@ resource "aws_lb" "frontend_alb" {
 # Defines where the ALB will route traffic
 resource "aws_lb_target_group" "ecommerce_frontend_tg" {
   name     = "ecommerce-frontend-tg"
-  port     = 3000              # Ports it would point to
+  port     = 3000 # Ports it would point to
   protocol = "HTTP"
   vpc_id   = var.vpc_id
 
   health_check {
-    path                = "/"   # Path to check the health of the application
-    healthy_threshold   = 2     # Specifies the # of consecutive successful checks needed
-    unhealthy_threshold = 10    # Specifies the # of consecutive failed checks needed
+    path                = "/" # Path to check the health of the application
+    healthy_threshold   = 2   # Specifies the # of consecutive successful checks needed
+    unhealthy_threshold = 10  # Specifies the # of consecutive failed checks needed
   }
 }
 
 # Create ALB Listener
 resource "aws_lb_listener" "ecommerce_frontend" {
-  load_balancer_arn = aws_lb.frontend_alb.arn      # Attach to the ALB
-  port              = "80"                         # Specifies the port it should listen on
+  load_balancer_arn = aws_lb.frontend_alb.arn # Attach to the ALB
+  port              = "80"                    # Specifies the port it should listen on
   protocol          = "HTTP"
 
   default_action {
-    type             = "forward"                  # Specifies that it should forward to the target group
+    type             = "forward" # Specifies that it should forward to the target group
     target_group_arn = aws_lb_target_group.ecommerce_frontend_tg.arn
   }
 }
@@ -247,13 +249,13 @@ resource "aws_lb_listener" "ecommerce_frontend" {
 # Create Target Group Attachments
 resource "aws_lb_target_group_attachment" "ecommerce_frontend_az1" {
   target_group_arn = aws_lb_target_group.ecommerce_frontend_tg.arn
-  target_id        = aws_instance.ecommerce_frontend_az1.id  # Attach to instance
+  target_id        = aws_instance.ecommerce_frontend_az1.id # Attach to instance
   port             = 3000
 }
 
 resource "aws_lb_target_group_attachment" "ecommerce_frontend_az2" {
   target_group_arn = aws_lb_target_group.ecommerce_frontend_tg.arn
-  target_id        = aws_instance.ecommerce_frontend_az2.id   # Attach to instance
+  target_id        = aws_instance.ecommerce_frontend_az2.id # Attach to instance
   port             = 3000
 }
 
@@ -266,11 +268,11 @@ resource "aws_db_instance" "postgres_db" {
   instance_class       = var.db_instance_class
   allocated_storage    = 20
   storage_type         = "standard"
-  db_name             = var.db_name
-  username            = var.db_username
-  password            = var.db_password
+  db_name              = var.db_name
+  username             = var.db_username
+  password             = var.db_password
   parameter_group_name = "default.postgres14"
-  skip_final_snapshot = true
+  skip_final_snapshot  = true
 
   db_subnet_group_name   = aws_db_subnet_group.rds_subnet_group.name
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
@@ -282,7 +284,7 @@ resource "aws_db_instance" "postgres_db" {
 
 resource "aws_db_subnet_group" "rds_subnet_group" {
   name       = "rds_subnet_group"
-  subnet_ids = [var.private_subnet_az1_id, var.private_subnet_az2_id]  # Using existing private subnets in AZ1 and AZ2
+  subnet_ids = [var.private_subnet_az1_id, var.private_subnet_az2_id] # Using existing private subnets in AZ1 and AZ2
 
   tags = {
     Name = "RDS subnet group"
@@ -298,7 +300,7 @@ resource "aws_security_group" "rds_sg" {
     from_port       = 5432
     to_port         = 5432
     protocol        = "tcp"
-    security_groups = [aws_security_group.ecommerce_backend_sg.id]  # Using your existing backend security group
+    security_groups = [aws_security_group.ecommerce_backend_sg.id] # Using your existing backend security group
   }
 
   egress {
@@ -330,12 +332,12 @@ output "ecommerce_frontend_az2_public_ip" {
 }
 
 # More outputs
-output "userdata_script_content" {
+output "userdata_script_content_frontend" {
   value = file("${path.module}/scripts/frontend_userdata.sh")
 }
 
-output "userdata_script_content" {
-  value = file("${path.module}/scripts/backend_userdata.sh")  
+output "userdata_script_content_backend" {
+  value = file("${path.module}/scripts/backend_userdata.sh")
 }
 
 output "alb_dns_name" {

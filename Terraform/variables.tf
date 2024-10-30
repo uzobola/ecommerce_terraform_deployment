@@ -1,20 +1,20 @@
 # Here we are describing the variables
 
-variable "aws_access_key" { 
-	type=string
-	sensitive=true
-	}
-          
-variable "aws_secret_key"{ 
-    type=string         
-	sensitive = true
-	}
-  
+variable "aws_access_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "aws_secret_key" {
+  type      = string
+  sensitive = true
+}
+
 variable "region" {
   description = "AWS region"
   type        = string
   default     = "us-east-1"
-} 
+}
 
 variable "instance_type" {
   description = "EC2 instance type"
@@ -27,15 +27,20 @@ variable "key_name" {
   type        = string
 }
 
- variable "monitoring_server_ip" {
-   description = "IP address of the monitoring server"
-   type        = string
- }
+variable "ssh_key" {
+  description = "Name of the private key"
+  type        = string
+}
+
+variable "monitoring_server_ip" {
+  description = "IP address of the monitoring server"
+  type        = string
+}
 
 variable "ami_id" {
   description = "AMI ID for EC2 instances"
   type        = string
-  default     = "ami-0c7217cdde317cfec"  # Ubuntu 22.04 LTS
+  default     = "ami-0c7217cdde317cfec" # Ubuntu 22.04 LTS
 }
 
 variable "default_vpc_id" {

@@ -7,18 +7,19 @@
 
 ## PROVIDER CONFIGURATION
 provider "aws" {
-  access_key = var.aws_access_key          # Replace with your AWS access key ID (leave empty if using IAM roles or env vars)
-  secret_key = var.aws_secret_key         # Replace with your AWS secret access key (leave empty if using IAM roles or env vars)
-  region     = var.region # Specify the AWS region where resources will be created (e.g., us-east-1, us-west-2)
+  access_key = var.aws_access_key # Replace with your AWS access key ID (leave empty if using IAM roles or env vars)
+  secret_key = var.aws_secret_key # Replace with your AWS secret access key (leave empty if using IAM roles or env vars)
+  region     = var.region         # Specify the AWS region where resources will be created (e.g., us-east-1, us-west-2)
+  
 }
 
 
 #  MODULE REFERENCES
 # VPC Module
 module "vpc" {
-  source = "./modules/vpc"    # Path to your vpc module directory
-  default_vpc_id = var.default_vpc_id   # For monitoring Server
-  default_vpc_route_table_id = var.default_vpc_route_table_id   # For monitoring server
+  source                     = "./modules/vpc"                # Path to your vpc module directory
+  default_vpc_id             = var.default_vpc_id             # For monitoring Server
+  default_vpc_route_table_id = var.default_vpc_route_table_id # For monitoring server
 
 
 }
@@ -26,14 +27,15 @@ module "vpc" {
 module "ec2" {
   source = "./modules/ec2"
 
-  vpc_id             = module.vpc.vpc_id
-  public_subnet_az1_id = module.vpc.public_subnet_az1_id
-  public_subnet_az2_id = module.vpc.public_subnet_az2_id
+  vpc_id                = module.vpc.vpc_id
+  public_subnet_az1_id  = module.vpc.public_subnet_az1_id
+  public_subnet_az2_id  = module.vpc.public_subnet_az2_id
   private_subnet_az1_id = module.vpc.private_subnet_az1_id
   private_subnet_az2_id = module.vpc.private_subnet_az2_id
-  key_name            = var.key_name
-  instance_type       = var.instance_type
-  ami_id              = var.ami_id
+  key_name              = var.key_name
+  instance_type         = var.instance_type
+  ami_id                = var.ami_id
+  ssh_key               = var.ssh_key
 }
 
 
@@ -42,13 +44,13 @@ module "ec2" {
 output "vpc_details" {
   description = "VPC Details"
   value = {
-    vpc_id            = module.vpc.vpc_id
-    public_subnet_az1_id = module.vpc.public_subnet_az1_id
-    public_subnet_az2_id = module.vpc.public_subnet_az2_id
-    private_subnet_az1_id = module.vpc.private_subnet_az1_id
-    private_subnet_az2_id = module.vpc.private_subnet_az2_id
-    nat_gateway_ids   = module.vpc.nat_gateway_ids
-    public_route_table_id = module.vpc.public_route_table_id
+    vpc_id                  = module.vpc.vpc_id
+    public_subnet_az1_id    = module.vpc.public_subnet_az1_id
+    public_subnet_az2_id    = module.vpc.public_subnet_az2_id
+    private_subnet_az1_id   = module.vpc.private_subnet_az1_id
+    private_subnet_az2_id   = module.vpc.private_subnet_az2_id
+    nat_gateway_ids         = module.vpc.nat_gateway_ids
+    public_route_table_id   = module.vpc.public_route_table_id
     private_route_table_ids = module.vpc.private_route_table_ids
   }
 }
@@ -94,4 +96,4 @@ output "backend_private_ips" {
 output "database_endpoint" {
   value       = module.ec2.rds_endpoint
   description = "The endpoint of the RDS database"
-} 
+}

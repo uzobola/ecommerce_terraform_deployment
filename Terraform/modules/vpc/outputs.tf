@@ -4,8 +4,8 @@
 # the rootmain can call it and use whatever dependencies are needed.
 
 output "vpc_id" {
- value = aws_vpc.wl5vpc.id    #reference the offical name of the resource. 
-                                 # The rest would pop-up
+  value = aws_vpc.wl5vpc.id #reference the offical name of the resource. 
+  # The rest would pop-up
 }
 
 output "public_subnet_az1_id" {
