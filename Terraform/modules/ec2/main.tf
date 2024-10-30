@@ -335,7 +335,7 @@ output "userdata_script_content" {
 }
 
 output "userdata_script_content" {
-  value = file("${path.module}/scripts/frontend_userdata.sh")  
+  value = file("${path.module}/scripts/backend_userdata.sh")  
 }
 
 output "alb_dns_name" {
