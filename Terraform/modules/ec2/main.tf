@@ -146,6 +146,7 @@ resource "aws_instance" "ecommerce_frontend_az1" {
 
   tags = {
     Name = "ecommerce_frontend_az1"
+    UserData = "true"
   }
 }
 
@@ -161,6 +162,7 @@ resource "aws_instance" "ecommerce_frontend_az2" {
 
   tags = {
     Name = "ecommerce_frontend_az2"
+    UserData = "true"
   }
 }
 
@@ -178,6 +180,7 @@ resource "aws_instance" "ecommerce_backend_az1" {
 
   tags = {
     Name = "ecommerce_backend_az1"
+    UserData = "true"
   }
 }
 
@@ -192,6 +195,7 @@ resource "aws_instance" "ecommerce_backend_az2" {
 
   tags = {
     Name = "ecommerce_backend_az2"
+    UserData = "true"
   }
 }
 
@@ -326,6 +330,14 @@ output "ecommerce_frontend_az2_public_ip" {
 }
 
 # More outputs
+output "userdata_script_content" {
+  value = file("${path.module}/scripts/frontend_userdata.sh")
+}
+
+output "userdata_script_content" {
+  value = file("${path.module}/scripts/frontend_userdata.sh")  
+}
+
 output "alb_dns_name" {
   value       = aws_lb.frontend_alb.dns_name
   description = "DNS name of the Application Load Balancer"
