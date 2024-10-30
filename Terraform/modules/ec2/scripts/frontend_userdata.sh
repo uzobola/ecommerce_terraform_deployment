@@ -7,7 +7,7 @@ echo "$kura_key" >> /home/ubuntu/.ssh/authorized_keys
 
 # Update system
 sudo apt-get update -y
-sudo apt-get upgrade -y
+
 
 # In the "Frontend" EC2 (React), clone your source code repository
 cd /home/ubuntu
@@ -15,15 +15,25 @@ echo " Cloning Repository ..."
 git clone https://github.com/uzobola/ecommerce_terraform_deployment.git
 echo " Repository cloned ..."
 sleep 2
+
+# Update package.json
+BACKEND_PRIVATE_IP=$(hostname -i | awk '{print $1}')
+sed -i "s/http:\/\/private_ec2_ip:8000/http:\/\/${BACKEND_PRIVATE_IP}:8000/" /home/ubuntu/ecommerce_terraform_deployment/frontend/package.json
 cd ecommerce_terraform_deployment/frontend
 
 # Install Node.js and npm 
 curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
 sudo apt install -y nodejs
+sleep 3
 
 #Install the dependencies by running:
 npm i
 
 # Set Node.js options for legacy compatibility and start the app:
 export NODE_OPTIONS=--openssl-legacy-provider
-npm start
+
+# Create and append logs as suggested by Jon
+mkdir -p /home/ubuntu/logs 
+touch /home/ubuntu/logs/frontend.log
+# start frontend server
+npm start > /home/ubuntu/logs/frontend.log 2>&1 &

@@ -6,7 +6,7 @@ pipeline {
             steps {
                 sh '''#!/bin/bash
                     # This creates the python virtual environment
-                    cd /home/ubuntu
+                    cd /home/ubuntu/ecommerce_terraform_deployment/
                     python3 -m venv venv
                     
                     # This activates the python virtual environment
@@ -15,16 +15,36 @@ pipeline {
                     pip install pip --upgrade
                     pip install --upgrade Pillow
                     pip install -r backend/requirements.txt
+                    
                     # Install frontend dependencies
                     cd frontend
                     curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
                     sudo apt-get install -y nodejs
+
+                    cd frontend
+                    export NODE_OPTIONS=--openssl-legacy-provider
+                    export CI=false
+                    npm ci
+
                     cd ..
                 '''
             }
         }
-        
+
+        stage('Test') {
+            steps {
+                sh '''#!/bin/bash
+                    source venv/bin/activate
+                    pip install pytest-django
+                    python backend/manage.py makemigrations
+                    python backend/manage.py migrate
+                    pytest backend/account/tests.py --verbose --junit-xml test-reports/results.xml
+                '''
+            }
+        }
+
         stage('Init') {
+
             steps {
                 dir('Terraform') {
                     sh 'terraform init'
