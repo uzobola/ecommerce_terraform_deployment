@@ -66,4 +66,4 @@ sleep 5
 
 # Start the Django server by running:
 echo "Starting Django Server"
-python manage.py runserver 0.0.0.0:8000
+nohup python manage.py runserver 0.0.0.0:8000 > /home/ubuntu/django.log 2>&1 &  # To have it run in the background and redirects the output to logs

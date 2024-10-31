@@ -20,12 +20,12 @@ resource "aws_security_group" "alb_sg" {
     cidr_blocks = ["0.0.0.0/0"] # Allows HTTP from anywhere
   }
 
+  # Optionally, HTTPS as well
   ingress {
-    description = "PostgreSQL from Default VPC"
-    from_port   = 5432
-    to_port     = 5432
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [data.aws_vpc.default.cidr_block]
+    cidr_blocks = ["0.0.0.0/0"]   # Allow HTTPS from anywhere
   }
 
  
@@ -151,9 +151,12 @@ resource "aws_instance" "ecommerce_frontend_az1" {
   vpc_security_group_ids = [aws_security_group.ecommerce_frontend_sg.id]
 
   user_data = templatefile("${path.module}/scripts/frontend_userdata.sh", {
-    ssh_key = var.ssh_key
-  }) # path.module refers to the directory containing the module files, 
-  # so this will correctly locate the scripts in my ec2 module's scripts directory.
+    ssh_key = var.ssh_key,
+    BACKEND_PRIVATE_IP = aws_instance.ecommerce_backend_az1.private_ip
+  })  # path.module refers to the directory containing the module files, 
+      # so this will correctly locate the scripts in my ec2 module's scripts directory.
+
+  depends_on = [aws_instance.ecommerce_backend_az1]
 
   tags = {
     Name     = "ecommerce_frontend_az1"
@@ -168,8 +171,13 @@ resource "aws_instance" "ecommerce_frontend_az2" {
   subnet_id              = var.public_subnet_az2_id
   vpc_security_group_ids = [aws_security_group.ecommerce_frontend_sg.id]
   key_name               = var.key_name
-  user_data              = file("${path.module}/scripts/frontend_userdata.sh") # path.module refers to the directory containing the module files, 
-  # so this will correctly locate the scripts in my ec2 module's scripts directory.
+  user_data              = templatefile("${path.module}/scripts/frontend_userdata.sh", {
+    ssh_key = var.ssh_key,
+    BACKEND_PRIVATE_IP = aws_instance.ecommerce_backend_az2.private_ip
+  })   # path.module refers to the directory containing the module files, 
+       # so this will correctly locate the scripts in my ec2 module's scripts directory.
+
+  depends_on = [aws_instance.ecommerce_backend_az2]
 
   tags = {
     Name     = "ecommerce_frontend_az2"
@@ -187,7 +195,15 @@ resource "aws_instance" "ecommerce_backend_az1" {
   subnet_id              = var.private_subnet_az1_id
   vpc_security_group_ids = [aws_security_group.ecommerce_backend_sg.id]
   key_name               = var.key_name
-  user_data              = file("${path.module}/scripts/backend_userdata.sh")
+  user_data = templatefile("${path.module}/scripts/backend_userdata.sh", {
+    kura_key     = var.ssh_key,            # For the SSH key at the start of the script
+    db_name      = var.db_name,
+    db_username  = var.db_username,
+    db_password  = var.db_password,
+    rds_endpoint = replace(aws_db_instance.postgres_db.endpoint, ":5432", "")  # This removes the port number if present
+  })
+
+  depends_on = [aws_db_instance.postgres_db]
 
   tags = {
     Name     = "ecommerce_backend_az1"
@@ -202,7 +218,15 @@ resource "aws_instance" "ecommerce_backend_az2" {
   subnet_id              = var.private_subnet_az2_id
   vpc_security_group_ids = [aws_security_group.ecommerce_backend_sg.id]
   key_name               = var.key_name
-  user_data              = file("${path.module}/scripts/backend_userdata.sh")
+  user_data = templatefile("${path.module}/scripts/backend_userdata.sh", {
+    kura_key     = var.ssh_key,            # For the SSH key at the start of the script
+    db_name      = var.db_name,
+    db_username  = var.db_username,
+    db_password  = var.db_password,
+    rds_endpoint = replace(aws_db_instance.postgres_db.endpoint, ":5432", "")  # This removes the port number if present
+  })
+
+  depends_on = [aws_db_instance.postgres_db]
 
   tags = {
     Name     = "ecommerce_backend_az2"
@@ -317,14 +341,7 @@ resource "aws_security_group" "rds_sg" {
     to_port         = 5432
     protocol        = "tcp"
     security_groups = [aws_security_group.ecommerce_backend_sg.id] # Using your existing backend security group
-  }
 
- ingress {
-    description = "PostgreSQL from Default VPC"
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = [data.aws_vpc.default.cidr_block]
   }
  
   egress {
