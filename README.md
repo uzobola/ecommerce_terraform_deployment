@@ -1,7 +1,7 @@
 # E-commerce Infrastructure as Code Deployment Documentation
 
 
-![Infrastructure Diagram](Diagram.jpg)
+
 
 ## Purpose
 The purpose of this workload is to design and implement a secure, highly available, and fault-tolerant AWS infrastructure for an e-commerce application using Infrastructure as Code (IaC) and CI/CD practices. 
