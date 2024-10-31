@@ -116,7 +116,7 @@ Lesson learned: Document all application configuration requirements
 
 
 
-## Optimization Opportunities
+## Optimization
 
 ### 1. Infrastructure can be optimized to use
 * Auto-scaling groups for dynamic scaling
@@ -124,7 +124,7 @@ Lesson learned: Document all application configuration requirements
 
 ### 2. Security
 * Implement WAF to add another layer of protection to the application
-* Enable AWS services for threat detection and the preventions of Ddos attacks.
+* Enable AWS services for threat detection and the prevention of Ddos attacks.
 
 
 ## Conclusion
